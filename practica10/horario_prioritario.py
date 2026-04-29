@@ -1,6 +1,5 @@
 materias = [] #lista materias que va a guardar cada diccionario que corresponde a cada materia
 
-
 def ordenar_hora_final(materias): #Ordena de acuerdo a la hora final. Es O(n^2) en el peor caso
     for i in range(1, len(materias)):
         actual = materias[i]
