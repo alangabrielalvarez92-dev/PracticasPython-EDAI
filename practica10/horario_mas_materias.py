@@ -18,8 +18,21 @@ def crear_horario(materias):
         if not horario:
             horario.append(materia)
         else:
-            if materia["inicio"] >= horario[-1]["fin"]:
-                horario.append(materia)
+            ultima = horario[-1] #se guarda en una variable temporal la última materia que se registró en la lista horario
+
+            if materia["inicio"] >= ultima["fin"]: #Se verifica si no hay enpalme 
+                horario.append(materia) #si no hay se agrega
+            else: #si hay enpalme se le indica al usuario que desea agregar al horario
+
+                print("\nError: Se empalman las siguientes materias...")
+                print(f"1. {ultima['nombre']} Prioridad: {ultima['prioridad']}")
+                print(f"2. {materia['nombre']} Prioridad: {materia['prioridad']}")
+
+                opcion = input("¿Qué materia quieres inscribir? (1 o 2): ")
+
+                if opcion == "2":
+                    horario[-1] = materia
+                
 
     return horario
 
@@ -33,6 +46,7 @@ for i in range(1,6): #Se van a almacenar 5 materias
     prioridad = int(input("Prioridad: "))
     inicio = int(input("Hora inicio: "))
     fin = int(input("Hora fin: "))
+    print("\n")
 
     materia = { #Diccionario materia
         "nombre": nombre,
