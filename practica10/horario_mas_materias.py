@@ -31,8 +31,7 @@ def crear_horario(materias):
                 opcion = input("¿Qué materia quieres inscribir? (1 o 2): ")
 
                 if opcion == "2":
-                    horario[-1] = materia
-                
+                    horario[-1] = materia 
 
     return horario
 
