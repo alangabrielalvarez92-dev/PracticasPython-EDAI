@@ -1,61 +1,65 @@
 matriz_lab = [
-    ['S',0,1,0,0],
-    [1,0,0,1,0],
-    [0,1,0,0,'F']
+    [1,1,0,0,0],
+    [1,1,0,1,1],
+    [1,'S',0,0,0],
+    [1,1,0,1,1],
+    [1,1,0,0,'F']
 ]
-
-fila = int(input("Ingresa la fila de inicio: "))
-columna = int(input("Ingresa la columna de inicio: "))
 
 def buscar_camino(matriz_lab,fila,columna):
     
+    #Casos Base
+
+    if not (0 <= fila <= 4 and 0 <= columna <= 4): #La posición está fuera del laberinto
+        return False
+
+    if matriz_lab[fila][columna] == 'F': #Se encontró la salida
+        print("Se encontró el final")
+        return True
+    
+    if matriz_lab[fila][columna] == 1 or matriz_lab[fila][columna] == '*': #Si es que ya se visitó
+        return False
+    
+    # Marcar la posición actual como parte del camino
+    if matriz_lab[fila][columna] != 'S':
+        matriz_lab[fila][columna] = '*'
+    
+    #Caso recursivo arriba, derecha, abajo, izquierda
     # Arriba
-    nueva_fila = fila - 1
-    nueva_columna = columna
-
-    if 0 <= nueva_fila <= 4 and 0 <= nueva_columna <= 4: #Se verifica que no se salga de la matriz
-        if matriz_lab[nueva_fila][nueva_columna] == 'F':
-            print("Se encontró el final")
-            return
-        
-        elif matriz_lab[nueva_fila][nueva_columna] == 0: #Se revisa si hay camino arriba
-            return buscar_camino(matriz_lab, nueva_fila, nueva_columna) #Si hay camino se vuelve a llamar a la función
-
-
-
+    if buscar_camino(matriz_lab, fila - 1, columna):
+        return True
+    
     # Derecha
-    nueva_fila = fila
-    nueva_columna = columna + 1
+    if buscar_camino(matriz_lab, fila, columna + 1):
+        return True
 
-    if 0 <= nueva_fila <= 4 and 0 <= nueva_columna <= 4:
-        if matriz_lab[nueva_fila][nueva_columna] == 'F':
-            print("Se encontró el final")
-            return
-        elif matriz_lab[nueva_fila][nueva_columna] == 0:
-            return buscar_camino(matriz_lab, nueva_fila, nueva_columna)
+    #Abajo
+    if buscar_camino(matriz_lab, fila + 1, columna):
+        return True
 
-    # Abajo
-    nueva_fila = fila + 1
-    nueva_columna = columna
+    #Izquierda
+    if buscar_camino(matriz_lab, fila, columna - 1 ):
+        return True
 
-    if 0 <= nueva_fila <= 4 and 0 <= nueva_columna <= 4:
-        if matriz_lab[nueva_fila][nueva_columna] == 'F':
-            print("Se encontró el final")
-            return
-        elif matriz_lab[nueva_fila][nueva_columna] == 0:
-            return buscar_camino(matriz_lab, nueva_fila, nueva_columna)
+    #Si no es ninguna se desmarca el camino
+    if matriz_lab[fila][columna] != 'S':
+        matriz_lab[fila][columna] = 0
+    
+    return False
 
-    # Izquierda
-    nueva_fila = fila
-    nueva_columna = columna - 1
+while True:
+    fila = int(input("Ingresa la fila de inicio: "))
+    columna = int(input("Ingresa la columna de inicio: "))
 
-    if 0 <= nueva_fila <= 4 and 0 <= nueva_columna <= 4:
-        if matriz_lab[nueva_fila][nueva_columna] == 'F':
-            print("Se encontró el final")
-            return
-        elif matriz_lab[nueva_fila][nueva_columna] == 0:
-            return buscar_camino(matriz_lab, nueva_fila, nueva_columna)
-        
-    return buscar_camino(matriz_lab, nueva_fila, nueva_columna)         
+    if 0 <= fila <= 4 and 0 <= columna <= 4:
+        break
+    else:
+        print("Ingresa solo datos dentro de los valores del 0 al 4")
 
-            
+if buscar_camino(matriz_lab, fila, columna):
+    print("Se encontró la salida")
+else:
+    print("No se encontró salida") 
+
+for fila in matriz_lab:
+        print(fila)        
