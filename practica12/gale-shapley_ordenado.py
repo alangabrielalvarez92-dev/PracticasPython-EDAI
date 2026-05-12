@@ -26,6 +26,49 @@ def merge(izq,der):
 
     return resultado
 
+def obtener_nombres(preferencias):
+    preferencias_ordenadas = {}
+
+    for persona, lista in preferencias.items():
+        lista_ordenada = merge_sort(lista)
+        preferencias_ordenadas[persona] = [opcion[0] for opcion in lista_ordenada]
+
+    return preferencias_ordenadas
+
+def gale_shapley(hospitales, alumnos):
+    hospitales_libres = list(hospitales.keys())
+    emparejamiento = {}  # alumno -> hospital
+    siguiente_propuesta = {hospital: 0 for hospital in hospitales}
+
+    ranking = {}
+    for alumno, lista in alumnos.items():
+        ranking[alumno] = {
+            hospital: posicion for posicion, hospital in enumerate(lista)
+        }
+
+    while hospitales_libres:
+        hospital = hospitales_libres.pop(0)
+
+        alumno = hospitales[hospital][siguiente_propuesta[hospital]]
+        siguiente_propuesta[hospital] += 1
+
+        if alumno not in emparejamiento:
+            emparejamiento[alumno] = hospital
+        else:
+            hospital_actual = emparejamiento[alumno]
+
+            if ranking[alumno][hospital] < ranking[alumno][hospital_actual]:
+                emparejamiento[alumno] = hospital
+                hospitales_libres.append(hospital_actual)
+            else:
+                hospitales_libres.append(hospital)
+
+    resultado = {}
+    for alumno, hospital in emparejamiento.items():
+        resultado[hospital] = alumno
+
+    return resultado
+
 Hospitales = { 
     "Hospital A": [("Ana", 90), ("Luis", 70), ("Sofia", 85)],
     "Hospital B": [("Ana", 80), ("Luis", 95), ("Sofia", 60)],
@@ -38,14 +81,20 @@ alumnos = {
     "Sofia": [("Hospital A", 85), ("Hospital B", 65), ("Hospital C", 90)],
 }
 
-for Hospital in Hospitales:
-    Hospitales[Hospital] = merge_sort(Hospitales[Hospital])
+Hospitales = obtener_nombres(Hospitales)
+alumnos = obtener_nombres(alumnos)
 
-for alumno in alumnos:
-    alumnos[alumno] = merge_sort(alumnos[alumno])
+resultado = gale_shapley(Hospitales, alumnos)
 
+print("Preferencias de hospitales ordenadas:")
+for hospital, preferencias in Hospitales.items():
+    print(hospital, "->", preferencias)
 
+print("\nPreferencias de alumnos ordenadas:")
+for alumno, preferencias in alumnos.items():
+    print(alumno, "->", preferencias)
 
-#print(Hospitales["Hospital B"][1][1])
-#print(len(Hospitales))
-#print(merge_sort(str))
+print("\nEmparejamiento final:")
+for hospital, alumno in resultado.items():
+    print(hospital, "-", alumno)
+
