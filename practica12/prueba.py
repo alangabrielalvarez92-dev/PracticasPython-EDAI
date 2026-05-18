@@ -1,3 +1,10 @@
+# Bibliotecas
+import random
+import matplotlib.pyplot as plt
+
+times = 0
+
+
 def merge_sort(st):
     if len(st) <= 1:
         return st
@@ -11,12 +18,16 @@ def merge_sort(st):
 
 
 def merge(izq, der):
+    global times
+
     resultado = []
 
     i = 0
     j = 0
 
     while i < len(izq) and j < len(der):
+        times = times + 1
+
         if izq[i][1] > der[j][1]:
             resultado.append(izq[i])
             i = i + 1
@@ -55,6 +66,8 @@ def obtener_nombres(preferencias):
 
 
 def gale_shapley(hospitales, alumnos):
+    global times
+
     hospitales_libres = list(hospitales.keys())
 
     emparejamiento = {}
@@ -85,6 +98,9 @@ def gale_shapley(hospitales, alumnos):
 
         siguiente_propuesta[hospital] = siguiente_propuesta[hospital] + 1
 
+        # Se cuenta una propuesta
+        times = times + 1
+
         if alumno not in emparejamiento:
             emparejamiento[alumno] = hospital
         else:
@@ -92,6 +108,9 @@ def gale_shapley(hospitales, alumnos):
 
             posicion_nuevo = nivel_preferencias[alumno][hospital]
             posicion_actual = nivel_preferencias[alumno][hospital_actual]
+
+            # Se cuenta una comparación de preferencias
+            times = times + 1
 
             if posicion_nuevo < posicion_actual:
                 emparejamiento[alumno] = hospital
@@ -107,42 +126,63 @@ def gale_shapley(hospitales, alumnos):
 
     return resultado
 
+def generar_datos(n):
+    hospitales = {}
+    alumnos = {}
 
-Hospitales = {
-    "Hospital A": [("Ana", 90), ("Luis", 70), ("Sofia", 85)],
-    "Hospital B": [("Ana", 80), ("Luis", 95), ("Sofia", 60)],
-    "Hospital C": [("Ana", 75), ("Luis", 65), ("Sofia", 100)]
-}
+    nombres_hospitales = []
+    nombres_alumnos = []
 
-alumnos = {
-    "Ana": [("Hospital A", 95), ("Hospital B", 80), ("Hospital C", 70)],
-    "Luis": [("Hospital A", 60), ("Hospital B", 100), ("Hospital C", 75)],
-    "Sofia": [("Hospital A", 85), ("Hospital B", 65), ("Hospital C", 90)]
-}
+    for i in range(n):
+        nombres_hospitales.append("Hospital " + str(i + 1))
+        nombres_alumnos.append("Alumno " + str(i + 1))
+
+    for hospital in nombres_hospitales:
+        lista = []
+
+        for alumno in nombres_alumnos:
+            puntaje = random.randint(1, 100)
+            lista.append((alumno, puntaje))
+
+        hospitales[hospital] = lista
+
+    for alumno in nombres_alumnos:
+        lista = []
+
+        for hospital in nombres_hospitales:
+            puntaje = random.randint(1, 100)
+            lista.append((hospital, puntaje))
+
+        alumnos[alumno] = lista
+
+    return hospitales, alumnos
+
+TAM = 101
+
+eje_x = list(range(1, TAM, 1))
+eje_y = []
+
+for num in eje_x:
+    hospitales, alumnos = generar_datos(num)
+
+    times = 0
+
+    hospitales = obtener_nombres(hospitales)
+    alumnos = obtener_nombres(alumnos)
+
+    resultado = gale_shapley(hospitales, alumnos)
+
+    eje_y.append(times)
 
 
-Hospitales = obtener_nombres(Hospitales)
-alumnos = obtener_nombres(alumnos)
+fig, ax = plt.subplots(facecolor='w', edgecolor='k')
 
-resultado = gale_shapley(Hospitales, alumnos)
+ax.plot(eje_x, eje_y, marker='o', color="b", linestyle='None')
 
+ax.set_xlabel('Número de hospitales y alumnos')
+ax.set_ylabel('Operaciones')
+ax.grid(True)
+ax.legend(["Gale-Shapley con Merge Sort"])
 
-print("Preferencias de hospitales ordenadas:")
-
-for hospital in Hospitales:
-    preferencias = Hospitales[hospital]
-    print(hospital, "-", preferencias)
-
-
-print("\nPreferencias de alumnos ordenadas:")
-
-for alumno in alumnos:
-    preferencias = alumnos[alumno]
-    print(alumno, "-", preferencias)
-
-
-print("\nEmparejamiento final:")
-
-for hospital in resultado:
-    alumno = resultado[hospital]
-    print(hospital, "-", alumno)
+plt.title('Complejidad del programa Gale-Shapley')
+plt.show()
